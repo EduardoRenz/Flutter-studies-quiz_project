@@ -1,19 +1,35 @@
 import 'package:flutter/material.dart';
-import './question.dart';
-import './option.dart';
+import './results.dart';
+import './questions.dart';
 
 void main() {
   runApp(QuizProject());
 }
 
 class _QuizProjectState extends State<QuizProject> {
-  final List<dynamic> answers = [null, null, null];
-
+  final List<String> answers = ['', '', ''];
+  final List<Map<String, dynamic>> _questions = const [
+    {
+      'text': 'What\'s your favorite color?',
+      'options': ['Black', 'Red']
+    },
+    {
+      'text': 'What\'s your favorite animal?',
+      'options': ['Dog', 'Cat']
+    },
+    {
+      'text': 'What\'s your favorite food?',
+      'options': ['Pizza', 'Burger']
+    }
+  ];
   int currentQuestion = 0;
+  bool get haveQuestions => currentQuestion < _questions.length;
+
   void _answer(int index, dynamic value) {
     setState(() {
       answers[index] = value;
-      currentQuestion = (currentQuestion + 1) % answers.length;
+      //currentQuestion = (currentQuestion + 1) % answers.length;
+      currentQuestion++;
     });
     print(answers);
   }
@@ -26,35 +42,21 @@ class _QuizProjectState extends State<QuizProject> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> questions = [
-      'What\'s your favorite color?',
-      'What\'s your favorite animal?',
-      'What\'s your favorite food?',
-    ];
+    Function answerFunc = generateAnswerFunc(currentQuestion);
+    List<String> questionTexts =
+        _questions.map((question) => question['text'].toString()).toList();
 
     return MaterialApp(
         home: Scaffold(
       appBar: AppBar(
         title: const Text('Quiz App'),
       ),
-      body: Column(
-        children: <Widget>[
-          Question(questions[currentQuestion]),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Option(
-                'Red',
-                generateAnswerFunc(currentQuestion),
-              ),
-              Option(
-                'Green',
-                generateAnswerFunc(currentQuestion),
-              ),
-            ],
-          )
-        ],
-      ),
+      body: haveQuestions
+          ? Questions(
+              questions: _questions,
+              currentQuestion: currentQuestion,
+              answer: answerFunc)
+          : Results(questionTexts, answers),
     ));
   }
 }
