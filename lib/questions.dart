@@ -16,7 +16,7 @@ class Questions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> options =
+    List<Map<String, dynamic>> options =
         haveQuestions ? questions[currentQuestion]['options'] : [];
 
     List<Widget> currentOptions = options.map((option) {

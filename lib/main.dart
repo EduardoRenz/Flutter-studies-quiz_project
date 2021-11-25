@@ -7,37 +7,62 @@ void main() {
 }
 
 class _QuizProjectState extends State<QuizProject> {
-  final List<String> answers = ['', '', ''];
+  num totalScore = 0;
   final List<Map<String, dynamic>> _questions = const [
     {
       'text': 'What\'s your favorite color?',
-      'options': ['Black', 'Red']
+      'options': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'Red', 'score': 5},
+        {'text': 'Green', 'score': 3},
+      ]
     },
     {
       'text': 'What\'s your favorite animal?',
-      'options': ['Dog', 'Cat']
+      'options': [
+        {'text': 'Dog', 'score': 10},
+        {'text': 'Cat', 'score': 5},
+        {'text': 'Rabbit', 'score': 3},
+      ]
     },
     {
       'text': 'What\'s your favorite food?',
-      'options': ['Pizza', 'Burger']
+      'options': [
+        {'text': 'Pizza', 'score': 10},
+        {'text': 'Burger', 'score': 5},
+        {'text': 'Pasta', 'score': 3},
+      ]
     }
   ];
+  List<String> answers = [];
   int currentQuestion = 0;
   bool get haveQuestions => currentQuestion < _questions.length;
 
   void _answer(int index, dynamic value) {
+    print(value);
     setState(() {
-      answers[index] = value;
+      answers[index] = value['text'];
       //currentQuestion = (currentQuestion + 1) % answers.length;
+      totalScore += value['score'];
       currentQuestion++;
     });
+
     print(answers);
+    print(totalScore);
   }
 
   Function generateAnswerFunc(int currentQuestion) {
-    return (dynamic value) {
-      _answer(currentQuestion, value);
+    return (dynamic selected) {
+      _answer(currentQuestion, selected);
     };
+  }
+
+  void restartQuiz() {
+    setState(() {
+      currentQuestion = 0;
+      totalScore = 0;
+      answers = List.filled(_questions.length, '');
+    });
   }
 
   @override
@@ -45,6 +70,8 @@ class _QuizProjectState extends State<QuizProject> {
     Function answerFunc = generateAnswerFunc(currentQuestion);
     List<String> questionTexts =
         _questions.map((question) => question['text'].toString()).toList();
+
+    answers = List.filled(_questions.length, '');
 
     return MaterialApp(
         home: Scaffold(
@@ -56,7 +83,7 @@ class _QuizProjectState extends State<QuizProject> {
               questions: _questions,
               currentQuestion: currentQuestion,
               answer: answerFunc)
-          : Results(questionTexts, answers),
+          : Results(questionTexts, answers, totalScore, restartQuiz),
     ));
   }
 }

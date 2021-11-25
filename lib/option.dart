@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Option extends StatelessWidget {
-  final String value;
+  final dynamic value;
   final Function onTap;
 
   Option(this.value, this.onTap);
@@ -13,7 +13,7 @@ class Option extends StatelessWidget {
       height: 50,
       child: ElevatedButton(
         onPressed: () => onTap(value),
-        child: Text(value),
+        child: Text(value['text']),
       ),
     );
   }
